@@ -1,0 +1,55 @@
+cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+[kubernetes]
+name=Kubernetes
+baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+enabled=1
+gpgcheck=1
+repo_gpgcheck=0
+gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+EOF
+
+yum check-update
+yum update
+yum install -y kubeadm
+systemctl enable kubelet
+systemctl start kubelet
+
+
+
+kubeadm init --apiserver-advertise-address=192.168.0.100 --pod-network-cidr=192.167.0.0/16
+
+kubeadm token create --print-join-command
+
+rm /etc/containerd/config.toml
+systemctl restart containerd
+
+
+kubectl describe pod calico-kube-controllers-56cdb7c587-w8d68 -n kube-system
+
+kubectl describe pod calico-kube-controllers-68884f975d-xr5pj -n calico-system
+
+
+Installing Pod Network using Calico network
+
+curl https://docs.projectcalico.org/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
+kubectl get pods -n kube-system
+
+
+
+kubectl get pod  -o wide --all-namespaces
+
+
+mkdir -p $HOME/.kube
+cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+chown (id -g) $HOME/.kube/config
+
+
+curl https://docs.projectcalico.org/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
+kubectl get pods -n kube-system
+
+scp root@192.168.0.100:/etc/kubernetes/admin.conf ~/.kube/config-mycluster
+
+
+https://docs.nginx.com/nginx-ingress-controller/installation/installation-with-manifests/
