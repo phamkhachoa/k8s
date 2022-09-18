@@ -1,0 +1,14 @@
+# Thông tin cluster
+kubectl cluster-info
+# Các node trong cluster
+kubectl get nodes
+# Các pod đang chạy trong tất cả các namespace
+kubectl get pods -A
+
+scp root@192.168.0.110:/etc/kubernetes/admin.conf ~/.kube/config-mycluster
+
+export KUBECONFIG=/Users/ps1.hoapk/.kube/config-mycluster
+
+
+# Lấy log của 1 pod 
+kubectl logs <pod-id>
